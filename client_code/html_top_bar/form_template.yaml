@@ -19,7 +19,7 @@ container:
           </div>
         </div>
       </nav>
-      
+
       <style>
         @media (max-width: 768px) {
           .nav-links {
@@ -30,7 +30,7 @@ container:
           }
         }
       </style>
-      
+
       <div anvil-slot="default"></div>
   type: HtmlTemplate
 is_package: true
