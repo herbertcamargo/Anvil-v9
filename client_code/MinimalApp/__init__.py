@@ -493,7 +493,6 @@ class MinimalApp(MinimalAppTemplate):
   
   def search_button_click(self, **event_args):
     """This method is called when the button is clicked"""
-    # Use client-side only functionality - no server calls
     query = self.search_box.text
     if not query:
       alert("Please enter a search term")
@@ -503,40 +502,37 @@ class MinimalApp(MinimalAppTemplate):
     Notification("Searching for videos...", timeout=2).show()
     
     try:
-      # Attempt to get results from server (in a full app)
-      # For demonstration purposes, we'll show an empty result set
-      videos = []
+      # Make the actual API call to search YouTube
+      videos = anvil.server.call('search_youtube_videos', query)
       
-      # Display a clear message about no server results
+      # Update the display with the search results
       self.results_panel.clear()
       self.results_panel.add_component(Label(text=f"Search Results for: {query}", role="heading"))
       
-      # Add message about YouTube API
-      message_panel = ColumnPanel(spacing="medium")
-      message_panel.border = "1px solid #ddd"
-      message_panel.background = "#f8f9fa"
-      message_panel.spacing = ("medium", "medium", "medium", "medium")
-      
-      title = Label(text="YouTube API Connection Required", role="heading")
-      title.bold = True
-      title.foreground = "#dc3545"  # Bootstrap danger color
-      
-      info = Label(text=f"This demo requires a YouTube Data API key to display real search results for '{query}'. No dummy videos will be shown.")
-      explanation = Label(text="In a production environment, the server would connect to the YouTube API and return real results.")
-      
-      message_panel.add_component(title)
-      message_panel.add_component(info)
-      message_panel.add_component(explanation)
-      
-      self.results_panel.add_component(message_panel)
-      
-      # Clear the current grid and update with empty results
+      # Update the YouTube grid with the returned videos
       self.update_youtube_grid(videos)
       
-      # Show a notification explaining the empty results
-      Notification("No videos to display - YouTube API key required", timeout=4).show()
+      if not videos:
+        # No videos found, show an informative message
+        message_panel = ColumnPanel(spacing="medium")
+        message_panel.border = "1px solid #ddd"
+        message_panel.background = "#f8f9fa"
+        message_panel.spacing = ("medium", "medium", "medium", "medium")
+        
+        title = Label(text="No Videos Found", role="heading")
+        title.bold = True
+        
+        info = Label(text=f"No videos found for search term '{query}'.")
+        
+        message_panel.add_component(title)
+        message_panel.add_component(info)
+        
+        self.results_panel.add_component(message_panel)
+      else:
+        # Show count of videos found
+        Notification(f"Found {len(videos)} videos for '{query}'", timeout=3).show()
       
-      # Scroll to show the explanation
+      # Scroll to show the results
       self.results_panel.scroll_into_view()
       
     except Exception as e:
