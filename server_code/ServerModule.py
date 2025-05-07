@@ -49,7 +49,7 @@ def search_youtube(query):
       return []
       
     # Use the YouTube API key
-    api_key = YOUTUBE_API_KEY
+    api_key = "AIzaSyAhj_M7HmHGlsEU8WK-NmOAKbGbhxs_ua8"
     
     if not api_key:
       print("Missing YouTube API key")
@@ -160,7 +160,7 @@ def get_video_details(video_id):
       return None
     
     # Use the YouTube API key
-    api_key = YOUTUBE_API_KEY
+    api_key = "AIzaSyAhj_M7HmHGlsEU8WK-NmOAKbGbhxs_ua8"
     
     if not api_key:
       print("Missing YouTube API key")
@@ -237,7 +237,7 @@ def test_youtube_api():
       Dictionary with status and message
   """
   try:
-    api_key = YOUTUBE_API_KEY
+    api_key = "AIzaSyAhj_M7HmHGlsEU8WK-NmOAKbGbhxs_ua8"
     
     if not api_key:
       return {"status": "error", "message": "YouTube API key is missing"}

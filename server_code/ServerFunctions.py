@@ -24,6 +24,15 @@ def get_fallback_videos(query):
     # This makes it seem like the search is working
     videos = []
     
+    # Ensure the query is a string
+    if not isinstance(query, str):
+        query = str(query)
+        
+    # Clean up the query
+    query = query.strip()
+    if not query:
+        query = "demo"
+    
     # Create a seed based on the query for consistent results
     query_hash = hashlib.md5(query.encode()).hexdigest()
     seed = int(query_hash[:8], 16)
@@ -40,33 +49,108 @@ def get_fallback_videos(query):
         "The future of {topic}",
         "{topic} explained simply",
         "Why {topic} matters",
-        "{topic} tutorial part 1"
+        "{topic} tutorial part 1",
+        "Top 10 {topic} tips",
+        "Learn {topic} in 5 minutes"
+    ]
+    
+    # Categories for video thumbnails with different colors
+    categories = [
+        {"color": "3498db", "text_color": "ffffff", "icon": "📚"},  # Education (blue)
+        {"color": "e74c3c", "text_color": "ffffff", "icon": "🎬"},  # Entertainment (red)
+        {"color": "2ecc71", "text_color": "ffffff", "icon": "💡"},  # Science (green)
+        {"color": "f39c12", "text_color": "ffffff", "icon": "🔧"},  # Tech (orange)
+        {"color": "9b59b6", "text_color": "ffffff", "icon": "🎮"},  # Gaming (purple)
+        {"color": "1abc9c", "text_color": "ffffff", "icon": "🏋️"},  # Fitness (teal)
+        {"color": "34495e", "text_color": "ffffff", "icon": "🎵"},  # Music (dark blue)
+    ]
+    
+    # Duration formats for videos
+    durations = ["5:21", "10:15", "3:42", "7:18", "15:30", "2:55", "4:03", "8:27", "12:09", "6:45"]
+    
+    # Generate reasonable view counts
+    view_count_templates = [
+        lambda: random_gen.randint(100, 999),
+        lambda: random_gen.randint(1000, 9999),
+        lambda: random_gen.randint(10000, 99999),
+        lambda: random_gen.randint(100000, 999999),
+        lambda: random_gen.randint(1000000, 9999999)
+    ]
+    
+    # List of channels to simulate real content
+    channels = [
+        "LearnHub",
+        "Master Class",
+        "Quick Tutorials",
+        "Expert Academy",
+        "Simplified Learning",
+        "TechCrafter",
+        "Knowledge Base",
+        "Smart Learning",
+        "Ultimate Guides",
+        "Learn Daily"
     ]
     
     # Generate 5 fallback videos
-    for i in range(5):
-        # Pick a random title template
+    for i in range(1, 6):
+        # Make the title
         title_template = templates[random_gen.randint(0, len(templates)-1)]
         title = title_template.replace("{topic}", query)
         
-        # Create a simple video ID
-        fake_id = f"demo-{query_hash[:6]}-{i+1}"
+        # Create a video ID
+        video_id = f"demo-{query_hash[:6]}-{i}"
         
-        # Generate random view count between 100 and 1M
-        views = random_gen.randint(100, 1000000)
+        # Pick a category
+        category = categories[random_gen.randint(0, len(categories)-1)]
         
-        # Create a fallback video object
-        videos.append({
-            'id': fake_id,
+        # Generate view count
+        view_generator = view_count_templates[random_gen.randint(0, min(i+1, len(view_count_templates)-1))]
+        views = view_generator()
+        
+        # Format views with commas
+        formatted_views = f"{views:,}"
+        
+        # Pick a duration
+        duration = durations[random_gen.randint(0, len(durations)-1)]
+        
+        # Pick a channel
+        channel = channels[random_gen.randint(0, len(channels)-1)]
+        
+        # Create a realistic placeholder that simulates a video thumbnail
+        thumbnail_url = (
+            f"https://placehold.co/320x180/{category['color']}/{category['text_color']}?"
+            f"text={category['icon']}+{query.replace(' ', '+')}+{i}"
+        )
+        
+        # Calculate a reasonable upload date (between 1 week and 3 years ago)
+        days_ago = random_gen.randint(7, 1095)
+        
+        # Create a human-readable time ago text
+        time_ago = f"{days_ago // 30} months ago" if days_ago > 60 else f"{days_ago} days ago" 
+        if days_ago > 365:
+            years = days_ago // 365
+            time_ago = f"{years} year{'s' if years > 1 else ''} ago"
+        
+        # Create a fallback video object with more realistic metadata
+        video = {
+            'id': video_id,
             'title': title,
-            'thumbnail_url': f"https://placehold.co/320x180/darkgray/white?text=Demo+Video+{i+1}",
-            'description': f"This is a demo video for '{query}' created because the YouTube API is unavailable.",
+            'thumbnail_url': thumbnail_url,
+            'description': f"This is a demo video about {query}. No connection to the YouTube API is required.",
+            'duration': duration,
+            'views': views,
+            'formatted_views': formatted_views,
+            'time_ago': time_ago,
             'channel': {
-                'title': 'Demo Channel'
+                'title': f"{channel}{random_gen.randint(1, 999) if random_gen.random() > 0.7 else ''}"
             },
-            'isDemo': True
-        })
+            'isDemo': True,
+            'offline_mode': True
+        }
+        
+        videos.append(video)
     
+    print(f"Generated {len(videos)} demo videos for query: {query}")
     return videos
 
 @anvil.server.callable
