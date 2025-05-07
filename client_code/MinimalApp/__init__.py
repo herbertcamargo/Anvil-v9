@@ -458,7 +458,7 @@ class MinimalApp(MinimalAppTemplate):
       self.yt_player_container.scroll_into_view()
       
     except anvil.js.ExternalError as js_error:
-      # Handle JavaScript errors properly
+      # Handle JavaScript errors properly   
       error_message = str(js_error.original_error) if hasattr(js_error, 'original_error') else str(js_error)
       alert(f"Error loading video: {error_message}")
       print(f"JavaScript error: {error_message}")
