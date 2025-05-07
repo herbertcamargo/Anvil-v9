@@ -1,0 +1,75 @@
+allow_embedding: false
+correct_dependency_ids: {dep_gqlhr7sei7ys7: 4UK6WHQ6UX7AKELK}
+db_schema:
+  users:
+    client: none
+    columns:
+    - admin_ui: {order: 0, width: 200}
+      name: email
+      type: string
+    - admin_ui: {order: 1, width: 200}
+      name: enabled
+      type: bool
+    - admin_ui: {order: 2, width: 200}
+      name: last_login
+      type: datetime
+    - admin_ui: {order: 3, width: 200}
+      name: password_hash
+      type: string
+    - admin_ui: {order: 4, width: 200}
+      name: n_password_failures
+      type: number
+    - admin_ui: {order: 5, width: 200}
+      name: confirmed_email
+      type: bool
+    - admin_ui: {order: 6, width: 200}
+      name: signed_up
+      type: datetime
+    - admin_ui: {order: 7, width: 200}
+      name: subscription
+      type: string
+    - admin_ui: {order: 8, width: 200}
+      name: cancel_subscription_at_period_end
+      type: bool
+    - admin_ui: {order: 9, width: 200}
+      name: stripe_id
+      type: string
+    - admin_ui: {order: 10, width: 200}
+      name: remembered_logins
+      type: simpleObject
+    - admin_ui: {order: -1, width: 200}
+      name: name
+      type: string
+    server: full
+    title: Users
+dependencies: []
+metadata: {description: 'For information on how to use this template, see our guide here: https://anvil.works/learn/tutorials/using-saas-template'}
+name: anvil-v6
+native_deps: null
+package_name: anvil_v6
+renamed: true
+runtime_options:
+  client_version: '3'
+  legacy_features: {}
+  server_spec: {auto_restart: true, base: python310-standard}
+  server_version: python3-sandbox
+  version: 3
+secrets:
+  stripe_secret_api_key:
+    type: secret
+    value: {4PVI6BHAXSGESMXB: 9HaAEAfHgb5OzOSWwE+tpp7OQHBx/b7qtyWLO9EfUs6tRYhn+keRbBU12KO2SsUoZxBmVQRRowYLAcLcZrnkX23XrNpeu0CD3vMGfBhrM+n5ONaa79izwXe1VY1IffH9jlGXj3nI/WRdLAH6Y/yfTVahBVTzhRFbLVGq5cawJkarGwxD0sKgYznBlm3RnNxpRmevvm5gYrWlYahZ7x6RuClnNl6GeN8k44a0p6Cxe50En++9SdCQkfC1yKpUmqS8oc+VFt/WNFSm24fV6WM/cKfVHlO3ycZ8/W1xR9465/FC+SPCOKeJ3DNLb1UVs8ToaChi4GjcrXocaaua26OWQa9oPnfuFDFGlUGJksMC3AU5iW9+md+fil67WB8eyx5sTxMv/pObM52sxFuL9k7qAQTERZZR, T4O5IQ35ZG7TTCZN: wKicTXysluYtsuFwBYK31Uq1YhX3Xedua/2NOqMILkSdO+vxMTel49STEStiie3I198EXBvuY9xYDXsH1ni1QdXB96Kst9LZm0JMPiNzyPn3kEAMu6wKSLB39Mc3uP+YZt/l/vsmDWREQ+FtgXcekPdaGAZJPMa4G+5eGTfURDdpD2Ifi5ezUtEX/VrBi41ZjLIVgYjzoLQS2s7VqDdqWUaAIzXUrCN5vR9y2LNszbSWQLTzrDBmIqz6ZKeAzricQdAez22e0SPYPg==}
+services:
+- client_config: {}
+  server_config: {}
+  source: /runtime/services/tables.yml
+- client_config: {allow_remember_me: true, allow_signup: true, confirm_email: false, enable_automatically: true, remember_me_days: 30, use_email: true}
+  server_config: {user_table: users}
+  source: /runtime/services/anvil/users.yml
+- client_config: {}
+  server_config: {}
+  source: /runtime/services/anvil/secrets.yml
+- client_config: {}
+  server_config: {}
+  source: /runtime/services/anvil/email.yml
+startup: {module: MinimalApp, type: form}
+startup_form: null

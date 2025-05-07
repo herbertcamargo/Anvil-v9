@@ -1,0 +1,129 @@
+components:
+- name: top_bar_html
+  properties:
+    html: |-
+      <nav style="background-color: #2c3e50; color: white; padding: 0.5rem 2rem; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto;">
+          <div style="display: flex; align-items: center;">
+            <img src="/_/theme/logo.png" onerror="this.src='https://via.placeholder.com/40x40'" style="height: 40px; margin-right: 1rem;">
+            <h1 style="font-size: 1.5rem; margin: 0; font-weight: 600;">Transcription Practice</h1>
+          </div>
+          <div class="nav-links" style="display: flex; gap: 1.5rem;">
+            <a href="#" id="home-link" onclick="event.preventDefault(); anvil.call('home_link_click')" style="color: white; text-decoration: none; font-weight: 500; padding: 0.5rem 0;">Home</a>
+            <a href="#" id="search-link" onclick="event.preventDefault(); anvil.call('search_link_click')" style="color: white; text-decoration: none; font-weight: 500; padding: 0.5rem 0;">Search</a>
+            <a href="#" id="compare-link" onclick="event.preventDefault(); anvil.call('comparison_link_click')" style="color: white; text-decoration: none; font-weight: 500; padding: 0.5rem 0;">Compare</a>
+            <a href="#" id="account-link" onclick="event.preventDefault(); anvil.call('account_link_click')" style="color: white; text-decoration: none; font-weight: 500; padding: 0.5rem 0;">Account</a>
+          </div>
+          <div class="mobile-menu" style="display: none;">
+            <button id="menu-button" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">☰</button>
+          </div>
+        </div>
+      </nav>
+      
+      <style>
+        @media (max-width: 768px) {
+          .nav-links {
+            display: none !important;
+          }
+          .mobile-menu {
+            display: block !important;
+          }
+        }
+      </style>
+  type: HtmlTemplate
+- layout_properties: {grid_position: 'CCCCCC,DDDDDD'}
+  name: nav_spacer
+  properties: {height: 20}
+  type: Spacer
+- components:
+  - layout_properties: {grid_position: 'QAZWSX,EDCRFV'}
+    name: welcome_title
+    properties: {align: center, font_size: 24, role: headline, text: Welcome to Transcription App}
+    type: Label
+  - layout_properties: {grid_position: 'TGBYHN,UJMIKOL'}
+    name: welcome_text
+    properties: {align: center, text: This client-side application helps you practice transcription and search for videos.}
+    type: Label
+  - layout_properties: {grid_position: 'RFVTGB,YHNUJM'}
+    name: welcome_image
+    properties: {align: center, source: 'https://img.icons8.com/color/96/000000/microphone--v1.png', width: 96}
+    type: Image
+  - components:
+    - event_bindings: {click: welcome_search_button_click}
+      layout_properties: {}
+      name: welcome_search_button
+      properties: {icon: 'fa:search', role: primary, text: Start Searching}
+      type: Button
+    - event_bindings: {click: welcome_compare_button_click}
+      layout_properties: {}
+      name: welcome_compare_button
+      properties: {icon: 'fa:exchange', role: primary-color, text: Practice Comparison}
+      type: Button
+    layout_properties: {grid_position: 'ZXCVBN,MLKJHG'}
+    name: welcome_buttons
+    properties: {align: center, spacing: large}
+    type: FlowPanel
+  layout_properties: {grid_position: 'WERTYU,ASDFGH'}
+  name: welcome_panel
+  properties: {role: card, visible: true}
+  type: ColumnPanel
+- components:
+  - layout_properties: {grid_position: 'ZXCVBN,QWERTY'}
+    name: search_heading
+    properties: {role: subheading, text: Video Search}
+    type: Label
+  - layout_properties: {grid_position: 'ASDFGH,ZXCVBN'}
+    name: search_box
+    properties: {placeholder: Enter search terms...}
+    type: TextBox
+  - event_bindings: {click: search_button_click}
+    layout_properties: {grid_position: 'ASDFGH,MNBVCX'}
+    name: search_button
+    properties: {role: primary, text: Search}
+    type: Button
+  - layout_properties: {grid_position: 'LKJHGF,POIUYT'}
+    name: yt_grid_container
+    properties: {spacing_above: large, visible: true}
+    type: ColumnPanel
+  - layout_properties: {grid_position: 'QWERTY,ASDFGH'}
+    name: yt_player_container
+    properties: {spacing_above: large, visible: true}
+    type: ColumnPanel
+  - layout_properties: {grid_position: 'POIUYT,LKJHGF'}
+    name: results_panel
+    properties: {spacing_above: large}
+    type: ColumnPanel
+  layout_properties: {grid_position: 'QWERTY,UIOPAS'}
+  name: search_panel
+  properties: {role: card, visible: true}
+  type: ColumnPanel
+- components:
+  - layout_properties: {grid_position: 'TGBYHN,UJMIK'}
+    name: compare_heading
+    properties: {role: subheading, text: Text Comparison}
+    type: Label
+  - layout_properties: {grid_position: 'RFVTGB,YHNUJM'}
+    name: text1_box
+    properties: {placeholder: Enter first text...}
+    type: TextArea
+  - layout_properties: {grid_position: 'IKLOPÇ,QAZWSX'}
+    name: text2_box
+    properties: {placeholder: Enter second text...}
+    type: TextArea
+  - event_bindings: {click: compare_button_click}
+    layout_properties: {grid_position: 'EDCRFV,TGBYHN'}
+    name: compare_button
+    properties: {role: primary, text: Compare Texts}
+    type: Button
+  - layout_properties: {grid_position: 'UJMIKOLP,ÇQAZWSX'}
+    name: result_label
+    properties: {align: center, text: Results will appear here}
+    type: Label
+  layout_properties: {grid_position: 'QAZWSX,EDCRFV'}
+  name: compare_panel
+  properties: {role: card, visible: true}
+  type: ColumnPanel
+container:
+  properties: {col_widths: '{}'}
+  type: ColumnPanel
+is_package: true

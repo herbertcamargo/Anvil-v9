@@ -1,0 +1,8 @@
+stripe
+youtube-transcript-api
+anvil-uplink>=0.4.1
+requests>=2.28.0
+google-api-python-client>=2.52.0
+google-auth>=2.6.6
+google-auth-oauthlib>=0.5.2
+python-dotenv>=0.20.0

@@ -1,0 +1,52 @@
+components:
+- components:
+  - event_bindings: {click: calculator_link_click}
+    name: calculator_navigation_link
+    properties: {icon: 'fa:calculator', text: Calculator}
+    type: Link
+  - event_bindings: {click: transcription_practice_link_click}
+    name: transcription_practice_navigation_link
+    properties: {icon: 'fa:microphone', text: Transcription Practice}
+    type: Link
+  - event_bindings: {click: stripe_pricing_link_click}
+    name: pricing_navigation_link
+    properties: {icon: 'fa:money', text: Pricing}
+    type: Link
+  - event_bindings: {click: stripe_pricing_link_click}
+    name: upgrade_navigation_link
+    properties: {icon: 'fa:arrow-up', text: Upgrade}
+    type: Link
+  - event_bindings: {click: account_link_click}
+    name: account_navigation_link
+    properties: {icon: 'fa:user', text: Account}
+    type: Link
+  - event_bindings: {click: logout_navigation_link_click}
+    name: logout_navigation_link
+    properties: {icon: 'fa:sign-out', text: Log out}
+    type: Link
+  name: navbar
+  properties: {}
+  type: FlowPanel
+- components:
+  - components:
+    - name: home_search_title
+      properties: {bold: true, font_size: 18, text: Search for Videos}
+      type: Label
+    - name: home_search_input
+      properties: {placeholder: Enter search keywords...}
+      type: TextBox
+    - event_bindings: {click: home_search_button_click}
+      name: home_search_button
+      properties: {icon: 'fa:search', text: Search}
+      type: Button
+    - name: home_search_results_panel
+      properties: {}
+      type: ColumnPanel
+    name: home_search_card
+    properties: {visible: true}
+    type: ColumnPanel
+  name: content_panel
+  properties: {}
+  type: ColumnPanel
+container: {type: ColumnPanel}
+is_package: true

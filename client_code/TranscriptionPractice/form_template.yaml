@@ -1,0 +1,34 @@
+components:
+- name: top_bar_html
+  properties:
+    html: |-
+      <nav style="background-color: #2c3e50; color: white; padding: 0.5rem 2rem; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto;">
+          <div style="display: flex; align-items: center;">
+            <img src="/_/theme/logo.png" onerror="this.src='https://via.placeholder.com/40x40'" style="height: 40px; margin-right: 1rem;">
+            <h1 style="font-size: 1.5rem; margin: 0; font-weight: 600;">Transcription Practice</h1>
+          </div>
+          <div class="nav-links" style="display: flex; gap: 1.5rem;">
+            <a href="#" id="home-link" onclick="event.preventDefault(); open_form('MinimalApp')" style="color: white; text-decoration: none; font-weight: 500; padding: 0.5rem 0;">Home</a>
+            <a href="#" id="compare-link" onclick="event.preventDefault(); anvil.call('compare_button_click')" style="color: white; text-decoration: none; font-weight: 500; padding: 0.5rem 0;">Compare</a>
+          </div>
+        </div>
+      </nav>
+  type: HtmlTemplate
+- layout_properties: {grid_position: 'CCCCCC,DDDDDD'}
+  name: nav_spacer
+  properties: {height: 20}
+  type: Spacer
+- layout_properties: {grid_position: 'ZWHWWR,DMPLVU'}
+  name: title_label
+  properties: {align: center, background: '', bold: true, border: '', font: '', font_size: null, foreground: '', icon: '', icon_align: left, italic: false, role: headline, spacing_above: small, spacing_below: small, text: Transcription Practice, tooltip: '', underline: false, visible: true}
+  type: Label
+- event_bindings: {click: compare_button_click}
+  layout_properties: {grid_position: 'LFBVNS,WVKFEU'}
+  name: compare_button
+  properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: null, foreground: '', icon: 'fa:exchange', icon_align: left, italic: false, role: primary, spacing_above: small, spacing_below: small, text: Go to Transcription Comparison, tooltip: '', underline: false, visible: true}
+  type: Button
+container:
+  properties: {col_widths: '{}'}
+  type: ColumnPanel
+is_package: true
