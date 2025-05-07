@@ -29,6 +29,11 @@ class MinimalApp(MinimalAppTemplate):
     self.test_grid_button.set_event_handler('click', self.create_test_grid)
     self.debug_panel.add_component(self.test_grid_button)
     
+    # Add test API button
+    self.test_api_button = Button(text="Test YouTube API", role="danger")
+    self.test_api_button.set_event_handler('click', self.test_youtube_api)
+    self.debug_panel.add_component(self.test_api_button)
+    
     # Add the debug panel to the search panel
     self.search_panel.add_component(self.debug_panel, index=1)
     
@@ -501,7 +506,51 @@ class MinimalApp(MinimalAppTemplate):
     # Show a loading indicator
     Notification("Searching for videos...", timeout=2).show()
     
+    # First, test the YouTube API connection
     try:
+      # Verify the API connection first
+      api_status = anvil.server.call('test_youtube_api')
+      
+      if api_status.get('status') != 'success':
+        # API connection failed, show error
+        error_message = api_status.get('message', 'Unknown YouTube API error')
+        alert(f"YouTube API Error: {error_message}")
+        
+        # Show error details in the results panel
+        self.results_panel.clear()
+        self.results_panel.add_component(Label(text=f"Search Results for: {query}", role="heading"))
+        
+        message_panel = ColumnPanel(spacing="medium")
+        message_panel.border = "1px solid #ddd"
+        message_panel.background = "#f8f9fa"
+        message_panel.spacing = ("medium", "medium", "medium", "medium")
+        
+        title = Label(text="YouTube API Connection Error", role="heading")
+        title.bold = True
+        title.foreground = "#dc3545"  # Red color for error
+        
+        info = Label(text=error_message)
+        
+        message_panel.add_component(title)
+        message_panel.add_component(info)
+        
+        # Show detailed error if available
+        if 'error_details' in api_status:
+          details = api_status['error_details']
+          details_text = f"Error code: {details.get('code', 'unknown')}\n"
+          details_text += f"Error reason: {details.get('errors', [{}])[0].get('reason', 'unknown')}"
+          error_details = Label(text=details_text)
+          message_panel.add_component(error_details)
+        
+        self.results_panel.add_component(message_panel)
+        
+        # Clear the grid
+        self.update_youtube_grid([])
+        
+        # Scroll to show the results
+        self.results_panel.scroll_into_view()
+        return
+    
       # Make the actual API call to search YouTube
       videos = anvil.server.call('search_youtube_videos', query)
       
@@ -537,8 +586,35 @@ class MinimalApp(MinimalAppTemplate):
       
     except Exception as e:
       # Show error notification if search fails
-      alert(f"Error during search: {str(e)}")
-      print(f"Search error: {str(e)}")
+      error_message = str(e)
+      alert(f"Error during search: {error_message}")
+      print(f"Search error: {error_message}")
+      
+      # Show error in UI
+      self.results_panel.clear()
+      self.results_panel.add_component(Label(text=f"Search Results for: {query}", role="heading"))
+      
+      message_panel = ColumnPanel(spacing="medium")
+      message_panel.border = "1px solid #ddd"
+      message_panel.background = "#f8f9fa"
+      message_panel.spacing = ("medium", "medium", "medium", "medium")
+      
+      title = Label(text="Search Error", role="heading")
+      title.bold = True
+      title.foreground = "#dc3545"  # Red color for error
+      
+      info = Label(text=f"Error searching for '{query}': {error_message}")
+      
+      message_panel.add_component(title)
+      message_panel.add_component(info)
+      
+      self.results_panel.add_component(message_panel)
+      
+      # Clear the grid
+      self.update_youtube_grid([])
+      
+      # Scroll to show the results
+      self.results_panel.scroll_into_view()
     
   def compare_button_click(self, **event_args):
     """Compare texts without server calls"""
@@ -574,3 +650,33 @@ class MinimalApp(MinimalAppTemplate):
   def account_link_click(self, **event_args):
     """Open the account management form"""
     open_form('AccountManagement') 
+
+  def test_youtube_api(self, **event_args):
+    """Test the YouTube API connection"""
+    try:
+      Notification("Testing YouTube API connection...", timeout=2).show()
+      
+      # Call the server test function
+      result = anvil.server.call('test_youtube_api')
+      
+      # Display results
+      status = result.get('status', 'unknown')
+      message = result.get('message', 'No message')
+      
+      if status == 'success':
+        alert(f"YouTube API Test: SUCCESS\n{message}")
+      else:
+        error_details = ""
+        if 'error_details' in result:
+          details = result['error_details']
+          if details:
+            error_details = f"\n\nError code: {details.get('code', 'unknown')}"
+            if 'errors' in details and details['errors']:
+              error_details += f"\nReason: {details['errors'][0].get('reason', 'unknown')}"
+              error_details += f"\nMessage: {details['errors'][0].get('message', 'No message')}"
+          
+        alert(f"YouTube API Test: {status.upper()}\n{message}{error_details}")
+      
+    except Exception as e:
+      alert(f"Error testing YouTube API: {str(e)}")
+      print(f"API test error: {str(e)}")
