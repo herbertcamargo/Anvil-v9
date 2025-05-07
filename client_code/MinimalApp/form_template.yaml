@@ -18,7 +18,7 @@ components:
           </div>
         </div>
       </nav>
-      
+
       <style>
         @media (max-width: 768px) {
           .nav-links {

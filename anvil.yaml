@@ -44,9 +44,9 @@ db_schema:
     title: Users
 dependencies: []
 metadata: {description: 'For information on how to use this template, see our guide here: https://anvil.works/learn/tutorials/using-saas-template'}
-name: anvil-v6
+name: anvil-v9
 native_deps: null
-package_name: anvil_v6
+package_name: anvil_v9
 renamed: true
 runtime_options:
   client_version: '3'
