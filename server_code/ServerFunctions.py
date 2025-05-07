@@ -11,6 +11,7 @@ import random
 # import re
 # import difflib
 
+@anvil.server.callable
 def get_fallback_videos(query):
     """Generate fallback videos when the YouTube API fails
     

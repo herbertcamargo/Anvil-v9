@@ -48,7 +48,7 @@ def search_youtube(query):
       print(f"Invalid query parameter: {query}")
       return []
       
-    # Use the YouTube API key
+    # Use the hardcoded YouTube API key
     api_key = "AIzaSyAhj_M7HmHGlsEU8WK-NmOAKbGbhxs_ua8"
     
     if not api_key:
@@ -237,6 +237,7 @@ def test_youtube_api():
       Dictionary with status and message
   """
   try:
+    # Use the hardcoded API key
     api_key = "AIzaSyAhj_M7HmHGlsEU8WK-NmOAKbGbhxs_ua8"
     
     if not api_key:

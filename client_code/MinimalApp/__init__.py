@@ -341,14 +341,10 @@ class MinimalApp(MinimalAppTemplate):
           <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 30px; background-color: #f8f9fa; display: inline-block; max-width: 600px;">
             <h3 style="color: #6c757d; margin-bottom: 15px;">No Videos Found</h3>
             <p style="color: #6c757d;">Enter a search term to display video results.</p>
-            <p style="color: #6c757d; font-size: 0.9em; margin-top: 15px;">The application is currently in offline mode.</p>
           </div>
         </div>
       """
       return
-    
-    # Check if we're in offline mode
-    is_offline_mode = any(video.get('offline_mode', False) for video in videos_data)
     
     # Otherwise, continue with normal video display (if we have videos)
     thumbnails_html = ""
@@ -365,10 +361,6 @@ class MinimalApp(MinimalAppTemplate):
         thumbnail_url = default_thumbnail
         
       # Get additional metadata for enhanced display
-      is_demo = video.get('isDemo', False)
-      formatted_views = video.get('formatted_views', '')
-      duration = video.get('duration', '')
-      time_ago = video.get('time_ago', '')
       channel_title = video.get('channel', {}).get('title', 'Unknown channel')
       
       # Create the thumbnail HTML with a data attribute for the index
@@ -376,88 +368,21 @@ class MinimalApp(MinimalAppTemplate):
         <div class="thumbnail-container" data-index="{i}" data-video-id="{video_id}" onclick="handleThumbnailClick({i})">
           <div class="thumbnail-wrapper">
             <img src="{thumbnail_url}" alt="{title}" class="thumbnail-image" onerror="this.onerror=null; this.src='{default_thumbnail}'">
-            {f'<span class="video-duration">{duration}</span>' if duration else ''}
-            {f'<span class="demo-badge">DEMO</span>' if is_demo else ''}
           </div>
           <div class="video-info">
             <p class="video-title">{title}</p>
             <p class="channel-title">{channel_title}</p>
-            <p class="video-metadata">
-              {f'{formatted_views} views' if formatted_views else ''}
-              {f' • {time_ago}' if time_ago else ''}
-            </p>
           </div>
         </div>
       """
     
-    # Add offline mode indicator if needed
-    if is_offline_mode:
-      offline_notice = """
-        <div class="offline-notice">
-          <div class="offline-badge">OFFLINE MODE</div>
-          <p class="offline-text">YouTube API connection is not available. Showing demo videos.</p>
-        </div>
-      """
-      thumbnails_html = offline_notice + thumbnails_html
-    
-    # Inject updated CSS for the enhanced thumbnails
+    # Inject updated CSS for the thumbnails
     enhanced_css = """
     <style>
-      .offline-notice {
-        width: 100%;
-        background-color: #f8d7da;
-        border: 1px solid #f5c6cb;
-        color: #721c24;
-        padding: 10px 15px;
-        margin-bottom: 20px;
-        border-radius: 4px;
-        grid-column: 1 / -1;
-      }
-      
-      .offline-badge {
-        display: inline-block;
-        background-color: #dc3545;
-        color: white;
-        font-size: 12px;
-        font-weight: bold;
-        padding: 2px 6px;
-        border-radius: 3px;
-        margin-bottom: 5px;
-      }
-      
-      .offline-text {
-        margin: 0;
-        font-size: 14px;
-      }
-      
       .thumbnail-wrapper {
         position: relative;
         width: 100%;
         aspect-ratio: 16/9;
-      }
-      
-      .video-duration {
-        position: absolute;
-        bottom: 8px;
-        right: 8px;
-        background-color: rgba(0, 0, 0, 0.8);
-        color: white;
-        padding: 1px 4px;
-        border-radius: 2px;
-        font-size: 12px;
-        font-weight: 500;
-      }
-      
-      .demo-badge {
-        position: absolute;
-        top: 8px;
-        left: 8px;
-        background-color: #f39c12;
-        color: white;
-        padding: 1px 4px;
-        border-radius: 2px;
-        font-size: 12px;
-        font-weight: bold;
       }
       
       .video-info {
@@ -468,12 +393,6 @@ class MinimalApp(MinimalAppTemplate):
         font-size: 13px;
         color: #606060;
         margin: 4px 0;
-      }
-      
-      .video-metadata {
-        font-size: 12px;
-        color: #606060;
-        margin: 0;
       }
     </style>
     """
@@ -543,7 +462,6 @@ class MinimalApp(MinimalAppTemplate):
       return
       
     title = video_data.get('title', 'Untitled video')
-    is_demo = video_data.get('isDemo', False)
     channel_title = video_data.get('channel', {}).get('title', '')
       
     try:
@@ -552,110 +470,18 @@ class MinimalApp(MinimalAppTemplate):
         anvil.js.window.YouTubePlayer.loadVideo(video_id, title)
       )
       
-      # Check if this is a demo video
-      if is_demo or video_id.startswith('demo-'):
-        # For demo videos, show a placeholder instead of an actual YouTube embed
-        player_container = anvil.js.get_dom_node(self.player_html).querySelector('.youtube-player-container')
-        if player_container:
-          # Create a placeholder with the video title
-          thumbnail_url = video_data.get('thumbnail_url', '')
-          
-          player_container.innerHTML = f"""
-            <div class="demo-player">
-              <div class="demo-player-header">
-                <div class="demo-badge">DEMO VIDEO</div>
-                <div class="offline-badge">OFFLINE MODE</div>
-              </div>
-              <div class="demo-player-content">
-                <img src="{thumbnail_url}" alt="{title}" class="demo-thumbnail">
-                <div class="demo-play-button">▶</div>
-                <div class="demo-player-message">
-                  <h3>This is a demo video</h3>
-                  <p>YouTube API connection is not available.</p>
-                  <p>Showing placeholder content instead.</p>
-                </div>
-              </div>
-            </div>
-            <style>
-              .demo-player {
-                width: 100%;
-                height: 100%;
-                position: absolute;
-                top: 0;
-                left: 0;
-                background-color: #f8f9fa;
-                border-radius: 8px;
-                display: flex;
-                flex-direction: column;
-              }
-              
-              .demo-player-header {
-                padding: 10px;
-                display: flex;
-                gap: 10px;
-              }
-              
-              .demo-player-content {
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                position: relative;
-              }
-              
-              .demo-thumbnail {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                position: absolute;
-                top: 0;
-                left: 0;
-                filter: brightness(0.7);
-              }
-              
-              .demo-play-button {
-                background-color: rgba(255, 0, 0, 0.8);
-                color: white;
-                width: 60px;
-                height: 60px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 24px;
-                position: absolute;
-                cursor: pointer;
-              }
-              
-              .demo-player-message {
-                background-color: rgba(0, 0, 0, 0.7);
-                color: white;
-                padding: 20px;
-                border-radius: 8px;
-                text-align: center;
-                margin-top: 20px;
-                z-index: 1;
-              }
-              
-              .demo-player-message h3 {
-                margin-top: 0;
-              }
-            </style>
-          """
-      else:
-        # For real YouTube videos, use the standard iframe embed
-        player_container = anvil.js.get_dom_node(self.player_html).querySelector('.youtube-player-container')
-        if player_container:
-          player_container.innerHTML = f"""
-            <iframe 
-              src="https://www.youtube.com/embed/{video_id}?autoplay=1" 
-              frameborder="0" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-              allowfullscreen
-              class="youtube-iframe">
-            </iframe>
-          """
+      # For YouTube videos, use the standard iframe embed
+      player_container = anvil.js.get_dom_node(self.player_html).querySelector('.youtube-player-container')
+      if player_container:
+        player_container.innerHTML = f"""
+          <iframe 
+            src="https://www.youtube.com/embed/{video_id}?autoplay=1" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen
+            class="youtube-iframe">
+          </iframe>
+        """
         
       # Update video title if available
       title_element = anvil.js.get_dom_node(self.player_html).querySelector('.video-title-display')
@@ -713,47 +539,12 @@ class MinimalApp(MinimalAppTemplate):
     # Show a loading indicator
     Notification("Searching for videos...", timeout=2).show()
     
-    # First, test the YouTube API connection
     try:
-      # This will now return offline mode notification
-      api_status = anvil.server.call('test_youtube_api')
-      
-      is_offline_mode = api_status.get('offline_mode', False)
-      
-      if is_offline_mode:
-        # Show offline mode notification (nicer than an error)
-        Notification("Running in offline mode - showing demo videos", timeout=3).show()
-    
-      # Make the actual API call to search YouTube
+      # Make the API call to search YouTube
       videos = anvil.server.call('search_youtube_videos', query)
       
       # Update the display with the search results
       self.results_panel.clear()
-      
-      # Add a header with offline mode indicator if needed
-      if is_offline_mode:
-        offline_header = ColumnPanel()
-        offline_header.background = "#f8d7da"
-        offline_header.border = "1px solid #f5c6cb"
-        offline_header.padding = ("10px", "15px")
-        offline_header.margin = ("0", "0", "15px", "0")
-        offline_header.border_radius = "4px"
-        
-        offline_badge = Label(text="OFFLINE MODE")
-        offline_badge.background = "#dc3545"
-        offline_badge.foreground = "white"
-        offline_badge.font_size = 12
-        offline_badge.bold = True
-        offline_badge.padding = ("2px", "6px")
-        offline_badge.border_radius = "3px"
-        
-        offline_message = Label(text="YouTube API connection is unavailable. Showing demo videos instead.")
-        offline_message.foreground = "#721c24"
-        
-        offline_header.add_component(offline_badge)
-        offline_header.add_component(offline_message)
-        
-        self.results_panel.add_component(offline_header)
       
       # Add search results header
       results_title = Label(text=f"Search Results for: {query}", role="heading")
@@ -781,8 +572,7 @@ class MinimalApp(MinimalAppTemplate):
       else:
         # Show count of videos found
         video_count = len(videos)
-        mode_text = " (Demo)" if is_offline_mode else ""
-        Notification(f"Found {video_count} videos{mode_text} for '{query}'", timeout=3).show()
+        Notification(f"Found {video_count} videos for '{query}'", timeout=3).show()
       
       # Scroll to show the results
       self.results_panel.scroll_into_view()
@@ -811,21 +601,10 @@ class MinimalApp(MinimalAppTemplate):
       message_panel.add_component(title)
       message_panel.add_component(info)
       
-      # Add a "Try offline mode" suggestion
-      suggestion = Label(text="The application will now show demo videos instead.")
-      suggestion.foreground = "#0056b3"
-      message_panel.add_component(suggestion)
-      
       self.results_panel.add_component(message_panel)
       
-      # Try to get some fallback results
-      try:
-        # This directly calls the fallback function
-        videos = anvil.server.call('get_fallback_videos', query)
-        self.update_youtube_grid(videos)
-      except:
-        # If even that fails, show empty grid
-        self.update_youtube_grid([])
+      # Clear the grid
+      self.update_youtube_grid([])
       
       # Scroll to show the results
       self.results_panel.scroll_into_view()
@@ -876,26 +655,8 @@ class MinimalApp(MinimalAppTemplate):
       # Display results
       status = result.get('status', 'unknown')
       message = result.get('message', 'No message')
-      is_offline_mode = result.get('offline_mode', False)
       
-      if is_offline_mode:
-        # Show offline mode explanation
-        alert_output = """
-Offline Mode Activated
-
-The application is running in offline mode to avoid server crashes. 
-YouTube API calls have been disabled.
-
-All searches will return demo videos that are generated
-based on your search terms. No actual YouTube data will be displayed.
-
-This is a workaround for the "Server code exited unexpectedly" error.
-"""
-        alert(alert_output)
-        
-        # Add a clear visual indicator of offline mode at the top of the page
-        self.add_offline_mode_banner()
-      elif status == 'success':
+      if status == 'success':
         alert(f"YouTube API Test: SUCCESS\n{message}")
       else:
         error_details = ""
@@ -912,29 +673,3 @@ This is a workaround for the "Server code exited unexpectedly" error.
     except Exception as e:
       alert(f"Error testing YouTube API: {str(e)}")
       print(f"API test error: {str(e)}")
-      
-  def add_offline_mode_banner(self):
-    """Add a permanent offline mode banner to the top of the page"""
-    # Check if we already have an offline banner
-    if hasattr(self, 'offline_banner') and self.offline_banner:
-      return
-      
-    # Create a banner at the very top of the page
-    self.offline_banner = ColumnPanel()
-    self.offline_banner.background = "#dc3545"  # Bootstrap danger red
-    self.offline_banner.foreground = "white"
-    self.offline_banner.padding = ("10px", "15px")
-    self.offline_banner.margin = ("0", "0", "15px", "0")
-    
-    offline_title = Label(text="OFFLINE MODE ACTIVE")
-    offline_title.bold = True
-    offline_title.align = "center"
-    
-    offline_description = Label(text="YouTube API is disabled. All searches will return demo videos.")
-    offline_description.align = "center"
-    
-    self.offline_banner.add_component(offline_title)
-    self.offline_banner.add_component(offline_description)
-    
-    # Add it to the top of the form
-    self.add_component(self.offline_banner, index=0)
